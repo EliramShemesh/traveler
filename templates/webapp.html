@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Attractions</title>
+</head>
+<body>
+    <h1>Find Top 10 Attractions in a City</h1>
+    <input type="text" id="city" placeholder="Enter city name">
+    <button onclick="getAttractions()">Get Top 10 Attractions</button>
+    <div id="result"></div>
+
+    <script>
+        async function getAttractions() {
+            const city = document.getElementById('city').value;
+            if (city) {
+                const prompt = `List the top 10 attractions in ${city}.`;
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = 'Loading...';
+
+                try {
+                    const response = await fetch('http://127.0.0.1:5000/getAttractions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ prompt: prompt }),
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        resultDiv.innerHTML = data.result.join('<br>');
+                    } else {
+                        resultDiv.innerHTML = `Error fetching data: ${data.error || 'Unknown error'}`;
+                    }
+                } catch (error) {
+                    resultDiv.innerHTML = `Error fetching data`;
+                    console.error(error);
+                }
+            } else {
+                alert('Please enter a city name');
+            }
+        }
+    </script>
+</body>
+</html>
